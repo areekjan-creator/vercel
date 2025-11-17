@@ -1,0 +1,73 @@
+{
+  "name": "birthday-v3-lifeline",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-confetti": "^6.1.0"
+  }import '../styles/globals.css'
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />
+}import { useState, useEffect } from 'react'
+import Confetti from 'react-confetti'
+import BirthdayCard from '../components/BirthdayCard'
+
+export default function Home() {
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [message, setMessage] = useState('')
+
+  // Fetch birthday message from "backend" API
+  useEffect(() => {
+    fetch('/api/birthday')
+      .then(res => res.json())
+      .then(data => setMessage(data.message))
+  }, [])
+
+  const handleCelebrate = () => {
+    setShowConfetti(true)
+    setTimeout(() => setShowConfetti(false), 5000)
+  }
+
+  return (
+    <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#f0f8ff', minHeight: '100vh' }}>
+      {showConfetti && <Confetti />}
+      <BirthdayCard age={26} message={message} />  {/* Age yahan 26 hai */}
+      <button 
+        onClick={handleCelebrate} 
+        style={{ padding: '10px 20px', fontSize: '1.2rem', backgroundColor: '#ff69b4', color: 'white', border: 'none', borderRadius: '5px', marginTop: '20px' }}
+      >
+        Celebrate!
+      </button>
+    </div>
+  )export default function handler(req, res) {
+  if (req.method === 'GET') {
+    res.status(200).json({
+      message: 'Happy Birthday! Wishing you a fantastic year ahead at age 26!'  // 
+    })
+  } else {
+    res.status(405).json({ error: 'Method not allowed' })
+  }
+}export default function BirthdayCard({ age, message }) {
+  return (
+    <div style={{ border: '2px solid #ff69b4', borderRadius: '10px', padding: '20px', maxWidth: '500px', margin: '0 auto', backgroundColor: 'white' }}>
+      <h1 style={{ fontSize: '3rem', color: '#ff69b4' }}>Happy Birthday!</h1>
+      <p style={{ fontSize: '1.5rem' }}>You're turning <strong>{age}</strong> today!</p>  {/* Age  26*/}
+      <img src="/birthday-cake.png" alt="Birthday Cake" style={{ width: '200px', margin: '20px 0' }} />
+      <p>{message}</p>
+    </div>
+  )body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f8ff;
+}
+
+* {
+  box-sizing: border-box;
